@@ -1,0 +1,17 @@
+const { ethers, upgrades } = require("hardhat");
+
+async function main() {
+    const Bridge = await ethers.getContractFactory("BridgeUpgradeable");
+    console.log("Deploying BridgeUpgradeable...");
+
+    const bridge = await upgrades.deployProxy(Bridge, { initializer: 'initialize' });
+    await bridge.deployed();
+
+    console.log("BridgeUpgradeable deployed to:", bridge.address);
+}
+
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});
+

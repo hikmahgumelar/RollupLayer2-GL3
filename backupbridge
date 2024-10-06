@@ -1,0 +1,31 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
+contract BridgeUpgradeable is Initializable, OwnableUpgradeable {
+
+    event Bridged(address indexed user, uint256 amount, uint256 timestamp);
+    
+    function initialize() public initializer {
+        __Ownable_init();
+    }
+
+    function bridgeETH() external payable {
+        require(msg.value > 0, "Must send ETH");
+        emit Bridged(msg.sender, msg.value, block.timestamp);
+    }
+
+    function updateBridge(address newBridge) external onlyOwner {
+        require(newBridge != address(0), "Invalid address");
+    }
+
+    function withdrawETH() external onlyOwner {
+        payable(owner()).transfer(address(this).balance);
+    }
+
+    receive() external payable {}
+}
+
